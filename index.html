@@ -4,383 +4,409 @@
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 <title>Joselo</title>
-<link href="https://fonts.googleapis.com/css2?family=Playfair+Display:ital,wght@0,700;1,700&family=DM+Mono:wght@400;500&family=Inter:wght@300;400;500;600&display=swap" rel="stylesheet">
+<link href="https://fonts.googleapis.com/css2?family=Playfair+Display:ital,wght@0,700;1,700&family=DM+Mono:wght@400;500&family=Inter:wght@300;400;500;600;700&display=swap" rel="stylesheet">
 <style>
-  * { margin: 0; padding: 0; box-sizing: border-box; }
+* { margin: 0; padding: 0; box-sizing: border-box; }
 
-  :root {
-    --rose: #ff0088;
-    --violet: #8800ff;
-    --blue: #0088ff;
-    --gold: #ffd700;
-    --surface: rgba(255,255,255,0.03);
-    --border: rgba(255,255,255,0.06);
-  }
+::-webkit-scrollbar { width: 6px; }
+::-webkit-scrollbar-track { background: #050505; }
+::-webkit-scrollbar-thumb { background: linear-gradient(180deg,#ff0088,#8800ff); border-radius: 3px; }
 
-  ::-webkit-scrollbar { width: 4px; }
-  ::-webkit-scrollbar-track { background: #0a0a0a; }
-  ::-webkit-scrollbar-thumb { background: var(--rose); border-radius: 2px; }
+body {
+  font-family: 'Inter', sans-serif;
+  background: #050505;
+  color: rgba(255,255,255,0.8);
+  overflow-x: hidden;
+}
 
-  body {
-    font-family: 'Inter', sans-serif;
-    background: #080808;
-    color: rgba(255,255,255,0.75);
-    min-height: 100vh;
-    display: flex;
-    justify-content: center;
-    padding: 3rem 1.5rem;
-    position: relative;
-    overflow-x: hidden;
-  }
+#bgCanvas {
+  position: fixed; top: 0; left: 0;
+  width: 100%; height: 100%;
+  z-index: 0; pointer-events: none;
+}
 
-  body::before {
-    content: '';
-    position: fixed;
-    top: 0; left: 0;
-    width: 100%; height: 100%;
-    background:
-      radial-gradient(ellipse 600px 600px at 10% 20%, rgba(255,0,136,0.03), transparent),
-      radial-gradient(ellipse 600px 600px at 90% 80%, rgba(136,0,255,0.03), transparent),
-      radial-gradient(ellipse 400px 400px at 50% 50%, rgba(0,136,255,0.02), transparent);
-    pointer-events: none;
-    z-index: 0;
-  }
+.wrapper {
+  position: relative; z-index: 1;
+  max-width: 1000px; margin: 0 auto;
+  padding: 3rem 1.5rem;
+}
 
-  .container {
-    max-width: 1000px;
-    width: 100%;
-    position: relative;
-    z-index: 1;
-  }
+/* PRIDE TOP BAR */
+.pride-bar {
+  display: flex; height: 4px;
+  border-radius: 2px; overflow: hidden;
+  margin-bottom: 3rem;
+  box-shadow: 0 0 20px rgba(255,0,136,0.2);
+}
+.pride-bar span {
+  flex: 1;
+  animation: prideWidth 2s ease-in-out infinite alternate;
+}
+.pride-bar span:nth-child(1) { background: #ff0040; animation-delay: 0s; }
+.pride-bar span:nth-child(2) { background: #ff8a00; animation-delay: 0.15s; }
+.pride-bar span:nth-child(3) { background: #ffe600; animation-delay: 0.3s; }
+.pride-bar span:nth-child(4) { background: #00cc44; animation-delay: 0.45s; }
+.pride-bar span:nth-child(5) { background: #0088ff; animation-delay: 0.6s; }
+.pride-bar span:nth-child(6) { background: #8800ff; animation-delay: 0.75s; }
+.pride-bar span:nth-child(7) { background: #ff0088; animation-delay: 0.9s; }
 
-  /* PRIDE BAR SUPERIOR */
-  .pride-bar {
-    display: flex;
-    height: 3px;
-    border-radius: 2px;
-    overflow: hidden;
-    margin-bottom: 3rem;
-  }
-  .pride-bar span {
-    flex: 1;
-    height: 100%;
-  }
-  .pride-bar span:nth-child(1) { background: #ff0000; }
-  .pride-bar span:nth-child(2) { background: #ff7700; }
-  .pride-bar span:nth-child(3) { background: #ffdd00; }
-  .pride-bar span:nth-child(4) { background: #00cc44; }
-  .pride-bar span:nth-child(5) { background: #0088ff; }
-  .pride-bar span:nth-child(6) { background: #8800ff; }
-  .pride-bar span:nth-child(7) { background: #ff0088; }
+@keyframes prideWidth {
+  0% { transform: scaleY(1); }
+  100% { transform: scaleY(2.5); }
+}
 
-  header {
-    text-align: center;
-    margin-bottom: 3.5rem;
-  }
+/* HEADER */
+header {
+  text-align: center;
+  margin-bottom: 3rem;
+  padding: 2rem;
+  background: rgba(255,255,255,0.02);
+  border: 1px solid rgba(255,255,255,0.04);
+  border-radius: 24px;
+  backdrop-filter: blur(20px);
+  position: relative;
+  overflow: hidden;
+}
 
-  .label {
-    font-size: 0.7rem;
-    font-weight: 500;
-    color: rgba(255,255,255,0.25);
-    text-transform: uppercase;
-    letter-spacing: 0.25em;
-    margin-bottom: 1rem;
-  }
+header::before {
+  content: '';
+  position: absolute;
+  top: -50%; left: -50%;
+  width: 200%; height: 200%;
+  background: conic-gradient(from 0deg, transparent, rgba(255,0,136,0.03), transparent, rgba(136,0,255,0.03), transparent);
+  animation: rotateGlow 20s linear infinite;
+}
 
-  h1 {
-    font-family: 'Playfair Display', serif;
-    font-size: 5rem;
-    font-weight: 700;
-    font-style: italic;
-    line-height: 1;
-    letter-spacing: -0.03em;
-    background: linear-gradient(135deg, var(--rose), var(--violet), var(--blue), var(--rose));
-    background-size: 300% 100%;
-    -webkit-background-clip: text;
-    -webkit-text-fill-color: transparent;
-    background-clip: text;
-    animation: shimmerText 6s ease infinite;
-    margin-bottom: 0.75rem;
-  }
+@keyframes rotateGlow { 100% { transform: rotate(360deg); } }
 
-  @keyframes shimmerText {
-    0%, 100% { background-position: 0% 50%; }
-    50% { background-position: 100% 50%; }
-  }
+.label {
+  font-size: 0.65rem;
+  font-weight: 600;
+  color: rgba(255,255,255,0.2);
+  text-transform: uppercase;
+  letter-spacing: 0.3em;
+  margin-bottom: 1rem;
+  position: relative;
+}
 
-  .subtitle {
-    font-size: 0.8rem;
-    font-weight: 300;
-    color: rgba(255,255,255,0.3);
-    letter-spacing: 0.2em;
-    text-transform: uppercase;
-    font-family: 'DM Mono', monospace;
-  }
+h1 {
+  font-family: 'Playfair Display', serif;
+  font-size: 6rem;
+  font-weight: 700;
+  font-style: italic;
+  line-height: 1;
+  letter-spacing: -0.03em;
+  background: linear-gradient(135deg, #ff0088, #8800ff, #0088ff, #00cc44, #ffdd00, #ff7700, #ff0000, #ff0088);
+  background-size: 600% 100%;
+  -webkit-background-clip: text;
+  -webkit-text-fill-color: transparent;
+  background-clip: text;
+  animation: prideShimmer 6s linear infinite;
+  margin-bottom: 0.75rem;
+  position: relative;
+  filter: drop-shadow(0 0 40px rgba(255,0,136,0.2));
+}
 
-  .subtitle em {
-    font-style: normal;
-    color: var(--rose);
-    font-weight: 500;
-  }
+@keyframes prideShimmer {
+  0% { background-position: 0% 50%; }
+  100% { background-position: 600% 50%; }
+}
 
-  /* STATS */
-  .stats {
-    display: flex;
-    justify-content: center;
-    gap: 2.5rem;
-    margin-bottom: 3rem;
-    padding: 1.25rem 2rem;
-    background: var(--surface);
-    border: 1px solid var(--border);
-    border-radius: 16px;
-    backdrop-filter: blur(20px);
-  }
+.subtitle {
+  font-size: 0.8rem;
+  font-weight: 300;
+  color: rgba(255,255,255,0.25);
+  letter-spacing: 0.15em;
+  text-transform: uppercase;
+  font-family: 'DM Mono', monospace;
+  position: relative;
+}
+.subtitle em {
+  font-style: normal;
+  color: #ff0088;
+  font-weight: 600;
+}
 
-  .stat {
-    text-align: center;
-  }
+/* STATS */
+.stats {
+  display: flex;
+  justify-content: center;
+  gap: 2rem;
+  margin-bottom: 2rem;
+  padding: 1.25rem 2rem;
+  background: rgba(255,255,255,0.02);
+  border: 1px solid rgba(255,255,255,0.04);
+  border-radius: 16px;
+  backdrop-filter: blur(20px);
+  flex-wrap: wrap;
+}
+.stat { text-align: center; }
+.stat-value {
+  font-family: 'DM Mono', monospace;
+  font-size: 1.8rem;
+  font-weight: 500;
+  background: linear-gradient(135deg, #ff0088, #8800ff);
+  -webkit-background-clip: text;
+  -webkit-text-fill-color: transparent;
+  background-clip: text;
+  line-height: 1;
+}
+.stat-value.gold {
+  background: linear-gradient(135deg, #ffdd00, #ff7700);
+  -webkit-background-clip: text;
+  background-clip: text;
+}
+.stat-label {
+  font-size: 0.6rem;
+  color: rgba(255,255,255,0.25);
+  text-transform: uppercase;
+  letter-spacing: 0.1em;
+  margin-top: 0.25rem;
+}
+.stat-divider {
+  width: 1px;
+  background: rgba(255,255,255,0.06);
+}
 
-  .stat-value {
-    font-family: 'DM Mono', monospace;
-    font-size: 1.5rem;
-    font-weight: 500;
-    background: linear-gradient(135deg, var(--rose), var(--violet));
-    -webkit-background-clip: text;
-    -webkit-text-fill-color: transparent;
-    background-clip: text;
-  }
+/* METER */
+.meter-wrap {
+  margin-bottom: 2rem;
+  padding: 1.5rem 2rem;
+  background: rgba(255,255,255,0.02);
+  border: 1px solid rgba(255,255,255,0.04);
+  border-radius: 16px;
+  backdrop-filter: blur(20px);
+}
+.meter-header {
+  display: flex; justify-content: space-between; align-items: center;
+  margin-bottom: 0.75rem;
+}
+.meter-header span {
+  font-size: 0.7rem; font-weight: 500;
+  color: rgba(255,255,255,0.3);
+  text-transform: uppercase; letter-spacing: 0.1em;
+}
+.meter-header strong {
+  font-family: 'DM Mono', monospace;
+  font-size: 0.85rem;
+  background: linear-gradient(90deg, #ff0088, #ffd700);
+  -webkit-background-clip: text;
+  -webkit-text-fill-color: transparent;
+  background-clip: text;
+}
+.meter-track {
+  height: 8px;
+  background: rgba(255,255,255,0.04);
+  border-radius: 4px;
+  overflow: hidden;
+}
+.meter-fill {
+  height: 100%; width: 100%;
+  background: linear-gradient(90deg, #ff0040, #ff8a00, #ffe600, #00cc44, #0088ff, #8800ff, #ff0088);
+  background-size: 200% 100%;
+  animation: meterAnim 2s linear infinite;
+  border-radius: 4px;
+}
+@keyframes meterAnim { 0% { background-position: 0% 50%; } 100% { background-position: 200% 50%; } }
 
-  .stat-label {
-    font-size: 0.65rem;
-    color: rgba(255,255,255,0.25);
-    text-transform: uppercase;
-    letter-spacing: 0.1em;
-    margin-top: 0.2rem;
-  }
+/* FILTERS */
+.filters {
+  display: flex; justify-content: center;
+  gap: 0.5rem; margin-bottom: 2rem;
+  flex-wrap: wrap;
+}
+.filter-btn {
+  font-family: 'DM Mono', monospace;
+  font-size: 0.6rem; font-weight: 500;
+  color: rgba(255,255,255,0.3);
+  background: rgba(255,255,255,0.02);
+  border: 1px solid rgba(255,255,255,0.06);
+  padding: 0.4rem 1.2rem;
+  border-radius: 20px;
+  cursor: pointer;
+  transition: all 0.3s cubic-bezier(0.34,1.56,0.64,1);
+  text-transform: uppercase;
+  letter-spacing: 0.1em;
+  backdrop-filter: blur(10px);
+}
+.filter-btn:hover, .filter-btn.active {
+  color: #fff;
+  border-color: #ff0088;
+  background: rgba(255,0,136,0.12);
+  box-shadow: 0 0 20px rgba(255,0,136,0.1);
+}
 
-  .divider {
-    width: 1px;
-    background: var(--border);
-  }
+/* GRID */
+.grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(180px, 1fr));
+  gap: 0.6rem;
+  margin-bottom: 3rem;
+}
 
-  /* PRIDE METER */
-  .meter-wrap {
-    margin-bottom: 3rem;
-    padding: 1.5rem 2rem;
-    background: var(--surface);
-    border: 1px solid var(--border);
-    border-radius: 16px;
-  }
+.frase {
+  background: rgba(255,255,255,0.02);
+  border: 1px solid rgba(255,255,255,0.04);
+  padding: 0.9rem 1rem;
+  border-radius: 14px;
+  font-size: 0.8rem;
+  font-weight: 400;
+  color: rgba(255,255,255,0.45);
+  transition: all 0.5s cubic-bezier(0.34,1.56,0.64,1);
+  position: relative;
+  overflow: hidden;
+  cursor: pointer;
+  line-height: 1.4;
+  backdrop-filter: blur(10px);
+  transform-origin: center;
+  animation: fadeIn 0.6s ease backwards;
+}
 
-  .meter-header {
-    display: flex;
-    justify-content: space-between;
-    align-items: center;
-    margin-bottom: 0.75rem;
-  }
+@keyframes fadeIn {
+  from { opacity: 0; transform: translateY(20px) scale(0.95); }
+  to { opacity: 1; transform: translateY(0) scale(1); }
+}
 
-  .meter-header span {
-    font-size: 0.7rem;
-    font-weight: 500;
-    color: rgba(255,255,255,0.3);
-    text-transform: uppercase;
-    letter-spacing: 0.1em;
-  }
+.frase::before {
+  content: '';
+  position: absolute;
+  top: 0; left: 0;
+  width: 100%; height: 100%;
+  background: linear-gradient(135deg, rgba(255,0,136,0.06), rgba(136,0,255,0.06));
+  opacity: 0;
+  transition: opacity 0.4s;
+}
 
-  .meter-header strong {
-    font-family: 'DM Mono', monospace;
-    font-size: 0.85rem;
-    font-weight: 500;
-    background: linear-gradient(90deg, var(--rose), var(--gold));
-    -webkit-background-clip: text;
-    -webkit-text-fill-color: transparent;
-    background-clip: text;
-  }
+.frase::after {
+  content: '';
+  position: absolute;
+  top: 0; left: 0;
+  width: 4px; height: 100%;
+  background: linear-gradient(180deg, #ff0088, #8800ff);
+  opacity: 0;
+  transition: opacity 0.4s;
+}
 
-  .meter-track {
-    height: 6px;
-    background: rgba(255,255,255,0.05);
-    border-radius: 3px;
-    overflow: hidden;
-  }
+.frase:hover {
+  border-color: rgba(255,0,136,0.2);
+  transform: translateY(-4px) scale(1.02);
+  color: rgba(255,255,255,0.95);
+  box-shadow: 0 12px 40px rgba(255,0,136,0.1), 0 0 60px rgba(136,0,255,0.05);
+}
 
-  .meter-fill {
-    height: 100%;
-    width: 100%;
-    border-radius: 3px;
-    background: linear-gradient(90deg, #ff0000, #ff7700, #ffdd00, #00cc44, #0088ff, #8800ff, #ff0088);
-    background-size: 200% 100%;
-    animation: meterAnim 3s linear infinite;
-  }
+.frase:hover::before,
+.frase:hover::after { opacity: 1; }
 
-  @keyframes meterAnim {
-    0% { background-position: 0% 50%; }
-    100% { background-position: 200% 50%; }
-  }
+.frase:active { transform: scale(0.96) !important; }
 
-  /* FILTROS */
-  .filters {
-    display: flex;
-    justify-content: center;
-    gap: 0.5rem;
-    margin-bottom: 2rem;
-    flex-wrap: wrap;
-  }
+.num {
+  color: rgba(255,255,255,0.1);
+  font-size: 0.65rem;
+  font-weight: 600;
+  margin-right: 0.4rem;
+  font-family: 'DM Mono', monospace;
+  transition: color 0.3s;
+}
+.frase:hover .num { color: #ff0088; }
 
-  .filter-btn {
-    font-family: 'DM Mono', monospace;
-    font-size: 0.65rem;
-    font-weight: 500;
-    color: rgba(255,255,255,0.3);
-    background: transparent;
-    border: 1px solid var(--border);
-    padding: 0.4rem 1rem;
-    border-radius: 20px;
-    cursor: pointer;
-    transition: all 0.3s;
-    text-transform: uppercase;
-    letter-spacing: 0.08em;
-  }
+.frase[data-cat="love"]:hover { border-color: rgba(255,0,136,0.25); box-shadow: 0 12px 40px rgba(255,0,136,0.15); }
+.frase[data-cat="sex"]:hover { border-color: rgba(136,0,255,0.25); box-shadow: 0 12px 40px rgba(136,0,255,0.15); }
+.frase[data-cat="pride"]:hover { border-color: rgba(0,136,255,0.25); box-shadow: 0 12px 40px rgba(0,136,255,0.15); }
+.frase[data-cat="identity"]:hover { border-color: rgba(255,215,0,0.25); box-shadow: 0 12px 40px rgba(255,215,0,0.15); }
 
-  .filter-btn:hover,
-  .filter-btn.active {
-    color: #fff;
-    border-color: var(--rose);
-    background: rgba(255,0,136,0.08);
-  }
+.frase[data-cat="love"]::after { background: linear-gradient(180deg, #ff0088, #ff0040); }
+.frase[data-cat="sex"]::after { background: linear-gradient(180deg, #8800ff, #0088ff); }
+.frase[data-cat="pride"]::after { background: linear-gradient(180deg, #0088ff, #00cc44); }
+.frase[data-cat="identity"]::after { background: linear-gradient(180deg, #ffd700, #ff7700); }
 
-  .grid {
-    display: grid;
-    grid-template-columns: repeat(auto-fill, minmax(200px, 1fr));
-    gap: 0.6rem;
-    margin-bottom: 3rem;
-  }
+/* FOOTER */
+footer {
+  text-align: center;
+  padding: 3rem 2rem;
+  position: relative;
+  background: rgba(255,255,255,0.01);
+  border: 1px solid rgba(255,255,255,0.04);
+  border-radius: 24px;
+  backdrop-filter: blur(20px);
+}
+footer::before {
+  content: '';
+  position: absolute;
+  top: -1px; left: 20%; right: 20%;
+  height: 2px;
+  background: linear-gradient(90deg, transparent, #ff0088, #8800ff, #0088ff, transparent);
+}
+footer p {
+  font-size: 0.7rem;
+  color: rgba(255,255,255,0.2);
+  font-weight: 300;
+  letter-spacing: 0.08em;
+}
+footer .sig {
+  font-family: 'Playfair Display', serif;
+  font-style: italic;
+  font-size: 1rem;
+  color: rgba(255,255,255,0.12);
+  margin-top: 0.5rem;
+}
 
-  .frase {
-    background: var(--surface);
-    border: 1px solid var(--border);
-    padding: 0.9rem 1rem;
-    border-radius: 12px;
-    font-size: 0.85rem;
-    font-weight: 400;
-    color: rgba(255,255,255,0.55);
-    transition: all 0.4s cubic-bezier(0.34, 1.56, 0.64, 1);
-    position: relative;
-    overflow: hidden;
-    cursor: default;
-    line-height: 1.4;
-    backdrop-filter: blur(10px);
-  }
+/* GLITTER OVERLAY */
+.glitter-overlay {
+  position: fixed;
+  top: 0; left: 0; width: 100%; height: 100%;
+  pointer-events: none;
+  z-index: 999;
+  background: radial-gradient(circle at 50% 50%, transparent 30%, rgba(0,0,0,0.1) 100%);
+}
 
-  .frase::before {
-    content: '';
-    position: absolute;
-    top: 0; left: 0;
-    width: 100%; height: 100%;
-    background: linear-gradient(135deg, rgba(255,0,136,0.05), rgba(136,0,255,0.05));
-    opacity: 0;
-    transition: opacity 0.4s;
-  }
+/* PRIDE EXPLOSION BTN */
+.btn-explode {
+  display: block;
+  margin: 2rem auto;
+  padding: 1rem 2.5rem;
+  background: linear-gradient(135deg, rgba(255,0,136,0.15), rgba(136,0,255,0.15));
+  border: 1px solid rgba(255,0,136,0.3);
+  color: #fff;
+  font-family: 'DM Mono', monospace;
+  font-size: 0.75rem;
+  font-weight: 500;
+  border-radius: 50px;
+  cursor: pointer;
+  transition: all 0.3s cubic-bezier(0.34,1.56,0.64,1);
+  text-transform: uppercase;
+  letter-spacing: 0.15em;
+  backdrop-filter: blur(10px);
+}
+.btn-explode:hover {
+  background: linear-gradient(135deg, rgba(255,0,136,0.25), rgba(136,0,255,0.25));
+  border-color: rgba(255,0,136,0.5);
+  transform: scale(1.05);
+  box-shadow: 0 0 40px rgba(255,0,136,0.2);
+}
 
-  .frase::after {
-    content: '';
-    position: absolute;
-    top: 0; left: 0;
-    width: 3px;
-    height: 100%;
-    background: linear-gradient(180deg, var(--rose), var(--violet));
-    opacity: 0;
-    transition: opacity 0.4s;
-  }
-
-  .frase:hover {
-    border-color: rgba(255,0,136,0.15);
-    transform: translateY(-2px);
-    color: rgba(255,255,255,0.9);
-    box-shadow: 0 8px 30px rgba(255,0,136,0.06);
-  }
-
-  .frase:hover::before,
-  .frase:hover::after {
-    opacity: 1;
-  }
-
-  .num {
-    color: rgba(255,255,255,0.15);
-    font-size: 0.7rem;
-    font-weight: 500;
-    margin-right: 0.4rem;
-    font-family: 'DM Mono', monospace;
-    transition: color 0.3s;
-  }
-
-  .frase:hover .num {
-    color: var(--rose);
-  }
-
-  .frase[data-cat="love"]:hover { border-color: rgba(255,0,136,0.2); }
-  .frase[data-cat="sex"]:hover { border-color: rgba(136,0,255,0.2); }
-  .frase[data-cat="pride"]:hover { border-color: rgba(0,136,255,0.2); }
-  .frase[data-cat="identity"]:hover { border-color: rgba(255,215,0,0.2); }
-
-  .badge {
-    display: none;
-    position: absolute;
-    top: 0.4rem; right: 0.4rem;
-    font-size: 0.55rem;
-    font-weight: 500;
-    color: rgba(255,255,255,0.15);
-    border: 1px solid var(--border);
-    padding: 0.1rem 0.4rem;
-    border-radius: 6px;
-    font-family: 'DM Mono', monospace;
-    letter-spacing: 0.05em;
-  }
-
-  .badge.show { display: block; }
-
-  footer {
-    text-align: center;
-    padding-top: 2rem;
-    border-top: 1px solid var(--border);
-  }
-
-  footer p {
-    font-size: 0.7rem;
-    color: rgba(255,255,255,0.2);
-    font-weight: 300;
-    letter-spacing: 0.05em;
-  }
-
-  footer .sig {
-    font-family: 'Playfair Display', serif;
-    font-style: italic;
-    font-size: 0.9rem;
-    color: rgba(255,255,255,0.15);
-    margin-top: 0.5rem;
-  }
-
-  .hidden { display: none; }
-
-  @media (max-width: 600px) {
-    h1 { font-size: 3rem; }
-    .grid { grid-template-columns: 1fr; }
-    .stats { gap: 1.5rem; padding: 1rem; flex-wrap: wrap; }
-    body { padding: 2rem 1rem; }
-  }
+@media (max-width: 600px) {
+  h1 { font-size: 3.5rem; }
+  .grid { grid-template-columns: 1fr 1fr; gap: 0.4rem; }
+  .frase { padding: 0.7rem; font-size: 0.75rem; }
+  .stats { gap: 1rem; padding: 1rem; }
+  .stat-value { font-size: 1.3rem; }
+  .wrapper { padding: 2rem 1rem; }
+}
 </style>
 </head>
 <body>
-<div class="container">
 
+<canvas id="bgCanvas"></canvas>
+
+<div class="wrapper">
   <div class="pride-bar">
     <span></span><span></span><span></span><span></span><span></span><span></span><span></span>
   </div>
 
   <header>
-    <div class="label">affirmations</div>
+    <div class="label">⚡ cien afirmaciones</div>
     <h1>Joselo</h1>
-    <div class="subtitle">cien declaraciones de <em>orgullo</em></div>
+    <div class="subtitle">orgullo sin filtro — <em>pluma al 100%</em></div>
   </header>
 
   <div class="stats">
@@ -388,51 +414,245 @@
       <div class="stat-value">100</div>
       <div class="stat-label">afirmaciones</div>
     </div>
-    <div class="divider"></div>
+    <div class="stat-divider"></div>
     <div class="stat">
-      <div class="stat-value" id="gayCount">100%</div>
-      <div class="stat-label">contenido gay</div>
+      <div class="stat-value" id="danteCount">0</div>
+      <div class="stat-label">veces dante</div>
     </div>
-    <div class="divider"></div>
+    <div class="stat-divider"></div>
+    <div class="stat">
+      <div class="stat-value gold">∞</div>
+      <div class="stat-label">nivel de gay</div>
+    </div>
+    <div class="stat-divider"></div>
     <div class="stat">
       <div class="stat-value">🏳️‍🌈</div>
       <div class="stat-label">orgullo</div>
-    </div>
-    <div class="divider"></div>
-    <div class="stat">
-      <div class="stat-value" id="danteCount">0</div>
-      <div class="stat-label">veces Dante</div>
     </div>
   </div>
 
   <div class="meter-wrap">
     <div class="meter-header">
-      <span>nivel de gay</span>
-      <strong>∞ / 100</strong>
+      <span>medidor de pluma</span>
+      <strong>MAX / 100</strong>
     </div>
-    <div class="meter-track">
-      <div class="meter-fill"></div>
-    </div>
+    <div class="meter-track"><div class="meter-fill"></div></div>
   </div>
 
   <div class="filters" id="filters">
-    <button class="filter-btn active" data-filter="all">todo</button>
-    <button class="filter-btn" data-filter="love">❤️ amor</button>
+    <button class="filter-btn active" data-filter="all">✨ todo</button>
+    <button class="filter-btn" data-filter="love">💕 amor</button>
     <button class="filter-btn" data-filter="sex">🍆 sexo</button>
     <button class="filter-btn" data-filter="pride">🏳️‍🌈 orgullo</button>
     <button class="filter-btn" data-filter="identity">💅 identidad</button>
   </div>
 
+  <button class="btn-explode" onclick="prideExplosion()">🎉 explota el orgullo 🎉</button>
+
   <div class="grid" id="grid"></div>
 
   <footer>
-    <p>hecho con orgullo, pluma y mucho brillo</p>
+    <p>hecho con pluma, orgullo y mucho glitter</p>
     <div class="sig">joselo ∞</div>
   </footer>
-
 </div>
 
 <script>
+// ============ CANVAS: ONDA PRIDE ============
+const canvas = document.getElementById('bgCanvas');
+const ctx = canvas.getContext('2d');
+let W, H;
+
+function resize() {
+  W = canvas.width = window.innerWidth;
+  H = canvas.height = window.innerHeight;
+}
+window.addEventListener('resize', resize);
+resize();
+
+const colors = ['#ff0040','#ff8a00','#ffe600','#00cc44','#0088ff','#8800ff','#ff0088'];
+let t = 0;
+
+function draw() {
+  t += 0.006;
+  ctx.clearRect(0, 0, W, H);
+
+  const spacing = H / colors.length;
+
+  for (let i = 0; i < colors.length; i++) {
+    ctx.beginPath();
+    const baseY = i * spacing + spacing / 2;
+    for (let x = 0; x <= W; x += 3) {
+      const y = baseY
+        + Math.sin(x * 0.006 + t + i * 0.7) * 12
+        + Math.sin(x * 0.003 + t * 0.5 + i * 1.3) * 8
+        + Math.sin(x * 0.001 + t * 0.3 + i * 2) * 14;
+      if (x === 0) ctx.moveTo(x, y);
+      else ctx.lineTo(x, y);
+    }
+    ctx.lineTo(W, H);
+    ctx.lineTo(0, H);
+    ctx.closePath();
+    ctx.fillStyle = colors[i] + '06';
+    ctx.fill();
+  }
+
+  ctx.globalAlpha = 0.02;
+  for (let i = 0; i < 3; i++) {
+    ctx.fillStyle = colors[Math.floor(Math.random() * colors.length)];
+    ctx.beginPath();
+    ctx.arc(Math.random() * W, Math.random() * H, 2 + Math.random() * 4, 0, Math.PI * 2);
+    ctx.fill();
+  }
+  ctx.globalAlpha = 1;
+
+  requestAnimationFrame(draw);
+}
+draw();
+
+// ============ PARTÍCULAS ============
+const emojis = ['🌈','💖','✨','⭐','💅','👑','🏳️‍🌈','🏳️‍⚧️','💕','🔥','🌟','💋','🎉','💗','🪩','❤️‍🔥','💝','✨','💞'];
+let particles = [];
+
+class Particle {
+  constructor(x, y, explode = false) {
+    this.x = x || Math.random() * W;
+    this.y = y || H + 20;
+    this.size = 12 + Math.random() * 22;
+    const speed = explode ? 2 + Math.random() * 4 : 0.3 + Math.random() * 0.8;
+    this.vy = explode ? (Math.random() - 0.5) * speed * 2 : -(speed);
+    this.vx = explode ? (Math.random() - 0.5) * speed * 2 : (Math.random() - 0.5) * 0.3;
+    this.emoji = emojis[Math.floor(Math.random() * emojis.length)];
+    this.life = 0.8 + Math.random() * 0.4;
+    this.maxLife = this.life;
+    this.rot = Math.random() * Math.PI * 2;
+    this.rotSpeed = (Math.random() - 0.5) * 0.04;
+    this.gravity = explode ? 0.05 : 0;
+  }
+  update() {
+    this.x += this.vx;
+    this.y += this.vy;
+    this.vy += this.gravity;
+    this.rot += this.rotSpeed;
+    this.life -= 0.004;
+  }
+  draw(ctx) {
+    if (this.life <= 0) return;
+    ctx.save();
+    ctx.translate(this.x, this.y);
+    ctx.rotate(this.rot);
+    ctx.globalAlpha = Math.max(0, this.life / this.maxLife);
+    ctx.font = `${this.size}px sans-serif`;
+    ctx.textAlign = 'center';
+    ctx.textBaseline = 'middle';
+    ctx.fillText(this.emoji, 0, 0);
+    ctx.restore();
+  }
+}
+
+for (let i = 0; i < 40; i++) {
+  const p = new Particle();
+  p.y = Math.random() * H;
+  p.life = 0.3 + Math.random() * 0.5;
+  p.maxLife = p.life;
+  particles.push(p);
+}
+
+// MOUSE TRAIL
+const trail = [];
+document.addEventListener('mousemove', (e) => {
+  trail.push({ x: e.clientX, y: e.clientY, life: 1 });
+  if (trail.length > 25) trail.shift();
+});
+
+// CLICK
+document.addEventListener('click', (e) => {
+  for (let i = 0; i < 15; i++) {
+    particles.push(new Particle(e.clientX, e.clientY, true));
+  }
+});
+
+// ANIMATE PARTICLES ON A SECOND CANVAS
+const pCanvas = document.createElement('canvas');
+pCanvas.style.cssText = 'position:fixed;top:0;left:0;width:100%;height:100%;z-index:0;pointer-events:none;';
+document.body.appendChild(pCanvas);
+const pCtx = pCanvas.getContext('2d');
+
+function resizeP() {
+  pCanvas.width = window.innerWidth;
+  pCanvas.height = window.innerHeight;
+}
+window.addEventListener('resize', resizeP);
+resizeP();
+
+function animParticles() {
+  pCtx.clearRect(0, 0, pCanvas.width, pCanvas.height);
+
+  // trail
+  for (let i = 0; i < trail.length; i++) {
+    const tr = trail[i];
+    tr.life -= 0.025;
+    if (tr.life <= 0) continue;
+    const alpha = tr.life * 0.5;
+    const size = 4 + tr.life * 6;
+    const ci = Math.floor((i / trail.length) * colors.length);
+    pCtx.globalAlpha = alpha;
+    pCtx.shadowBlur = 20;
+    pCtx.shadowColor = colors[ci];
+    pCtx.fillStyle = colors[ci];
+    pCtx.beginPath();
+    pCtx.arc(tr.x, tr.y, size, 0, Math.PI * 2);
+    pCtx.fill();
+  }
+  pCtx.shadowBlur = 0;
+  pCtx.globalAlpha = 1;
+
+  // particles
+  for (const p of particles) {
+    p.update();
+    p.draw(pCtx);
+  }
+
+  // cleanup
+  particles = particles.filter(p => p.life > 0 && p.y < pCanvas.height + 50);
+
+  requestAnimationFrame(animParticles);
+}
+animParticles();
+
+// ============ FILTERS ============
+document.querySelectorAll('.filter-btn').forEach(btn => {
+  btn.addEventListener('click', () => {
+    document.querySelectorAll('.filter-btn').forEach(b => b.classList.remove('active'));
+    btn.classList.add('active');
+    const filter = btn.dataset.filter;
+    document.querySelectorAll('.frase').forEach((f, i) => {
+      if (filter === 'all' || f.dataset.cat === filter) {
+        f.style.display = '';
+        f.style.animation = 'none';
+        f.offsetHeight;
+        f.style.animation = `fadeIn 0.4s ease ${i * 0.02}s backwards`;
+      } else {
+        f.style.display = 'none';
+      }
+    });
+  });
+});
+
+// ============ PRIDE EXPLOSION ============
+function prideExplosion() {
+  for (let k = 0; k < 6; k++) {
+    setTimeout(() => {
+      const cx = Math.random() * pCanvas.width;
+      const cy = Math.random() * pCanvas.height;
+      for (let i = 0; i < 20; i++) {
+        particles.push(new Particle(cx, cy, true));
+      }
+    }, k * 120);
+  }
+}
+
+// ============ GRID ============
 const frases = [
   { t: "joselo es gay", c: "identity" },
   { t: "joselo chupa pene rico", c: "sex" },
@@ -548,35 +768,22 @@ frases.forEach((item, i) => {
   const div = document.createElement('div');
   div.className = 'frase';
   div.setAttribute('data-cat', item.c);
+  div.style.animationDelay = `${i * 0.02}s`;
   div.innerHTML = `<span class="num">${String(i+1).padStart(2,'0')}</span> ${item.t}`;
-
   if (item.t.toLowerCase().includes('dante')) danteTotal++;
-
   div.addEventListener('click', () => {
-    div.style.transform = 'scale(0.97)';
+    div.style.transform = 'scale(0.95)';
     setTimeout(() => { div.style.transform = ''; }, 150);
+    // mini explosion
+    const rect = div.getBoundingClientRect();
+    for (let k = 0; k < 3; k++) {
+      particles.push(new Particle(rect.left + Math.random() * rect.width, rect.top + Math.random() * rect.height, true));
+    }
   });
-
   grid.appendChild(div);
 });
 
 danteCount.textContent = danteTotal;
-
-// FILTROS
-document.querySelectorAll('.filter-btn').forEach(btn => {
-  btn.addEventListener('click', () => {
-    document.querySelectorAll('.filter-btn').forEach(b => b.classList.remove('active'));
-    btn.classList.add('active');
-    const filter = btn.dataset.filter;
-    document.querySelectorAll('.frase').forEach(f => {
-      if (filter === 'all' || f.dataset.cat === filter) {
-        f.style.display = '';
-      } else {
-        f.style.display = 'none';
-      }
-    });
-  });
-});
 </script>
 </body>
 </html>
