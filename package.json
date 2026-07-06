@@ -1,0 +1,8 @@
+{
+  "name": "joselo",
+  "version": "1.0.0",
+  "description": "Joselo 100% Gay",
+  "scripts": {
+    "start": "npx serve . -p $PORT"
+  }
+}
