@@ -360,6 +360,35 @@ footer .sig {
 }
 
 /* PRIDE EXPLOSION BTN */
+.btn-music {
+  display: inline-block;
+  padding: 0.6rem 1.5rem;
+  background: rgba(255,255,255,0.03);
+  border: 1px solid rgba(255,255,255,0.08);
+  color: rgba(255,255,255,0.5);
+  font-family: 'DM Mono', monospace;
+  font-size: 0.65rem;
+  font-weight: 500;
+  border-radius: 50px;
+  cursor: pointer;
+  transition: all 0.3s cubic-bezier(0.34,1.56,0.64,1);
+  text-transform: uppercase;
+  letter-spacing: 0.12em;
+  backdrop-filter: blur(10px);
+}
+.btn-music:hover {
+  background: rgba(255,0,136,0.1);
+  border-color: rgba(255,0,136,0.3);
+  color: #fff;
+  transform: scale(1.05);
+}
+.btn-music.playing {
+  background: rgba(255,0,136,0.12);
+  border-color: #ff0088;
+  color: #fff;
+  box-shadow: 0 0 20px rgba(255,0,136,0.15);
+}
+
 .btn-explode {
   display: block;
   margin: 2rem auto;
@@ -438,6 +467,13 @@ footer .sig {
     </div>
     <div class="meter-track"><div class="meter-fill"></div></div>
   </div>
+
+  <!-- MUSIC PLAYER -->
+  <div style="text-align:center;margin-bottom:1.5rem;">
+    <button id="musicBtn" class="btn-music" onclick="toggleMusic()">🎵 prender música</button>
+    <div style="font-size:0.6rem;color:rgba(255,255,255,0.15);margin-top:0.4rem;font-family:'DM Mono',monospace;" id="musicStatus">sin música</div>
+  </div>
+  <div id="ytPlayer" style="display:none;"></div>
 
   <div class="filters" id="filters">
     <button class="filter-btn active" data-filter="all">✨ todo</button>
@@ -784,6 +820,63 @@ frases.forEach((item, i) => {
 });
 
 danteCount.textContent = danteTotal;
+
+// ============ MÚSICA ============
+let musicPlaying = false;
+let player = null;
+const videoId = '4wVViyPVYDw';
+
+function toggleMusic() {
+  const btn = document.getElementById('musicBtn');
+  const status = document.getElementById('musicStatus');
+
+  if (!musicPlaying) {
+    // Cargar el reproductor
+    if (!player) {
+      const tag = document.createElement('script');
+      tag.src = 'https://www.youtube.com/iframe_api';
+      document.head.appendChild(tag);
+
+      window.onYouTubeIframeAPIReady = () => {
+        player = new YT.Player('ytPlayer', {
+          height: '0',
+          width: '0',
+          videoId: videoId,
+          playerVars: {
+            autoplay: 1,
+            mute: 0,
+            loop: 1,
+            playlist: videoId,
+            controls: 0,
+            showinfo: 0,
+            modestbranding: 1
+          },
+          events: {
+            onReady: (e) => {
+              e.target.playVideo();
+              musicPlaying = true;
+              btn.textContent = '🎵 apagar música';
+              btn.classList.add('playing');
+              status.textContent = '🎶 sonando: cumbia peruana';
+            }
+          }
+        });
+      };
+    } else {
+      player.playVideo();
+      musicPlaying = true;
+      btn.textContent = '🎵 apagar música';
+      btn.classList.add('playing');
+      status.textContent = '🎶 sonando: cumbia peruana';
+    }
+  } else {
+    if (player) player.pauseVideo();
+    musicPlaying = false;
+    btn.textContent = '🎵 prender música';
+    btn.classList.remove('playing');
+    status.textContent = '⏸ pausado';
+  }
+}
 </script>
 </body>
 </html>
