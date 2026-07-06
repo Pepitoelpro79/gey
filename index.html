@@ -470,8 +470,8 @@ footer .sig {
 
   <!-- MUSIC PLAYER -->
   <div style="text-align:center;margin-bottom:1.5rem;">
-    <button id="musicBtn" class="btn-music" onclick="toggleMusic()">🎵 prender música</button>
-    <div style="font-size:0.6rem;color:rgba(255,255,255,0.15);margin-top:0.4rem;font-family:'DM Mono',monospace;" id="musicStatus">sin música</div>
+    <button id="musicBtn" class="btn-music" onclick="toggleMusic()">🎵 apagar música</button>
+    <div style="font-size:0.6rem;color:rgba(255,255,255,0.15);margin-top:0.4rem;font-family:'DM Mono',monospace;" id="musicStatus">🎶 sonando: cumbia peruana 🔇</div>
   </div>
   <div id="ytPlayer" style="display:none;"></div>
 
@@ -824,57 +824,91 @@ danteCount.textContent = danteTotal;
 // ============ MÚSICA ============
 let musicPlaying = false;
 let player = null;
+let unblocked = false;
 const videoId = '4wVViyPVYDw';
+
+function initMusic() {
+  if (player) return;
+  const btn = document.getElementById('musicBtn');
+  const status = document.getElementById('musicStatus');
+
+  const tag = document.createElement('script');
+  tag.src = 'https://www.youtube.com/iframe_api';
+  document.head.appendChild(tag);
+
+  window.onYouTubeIframeAPIReady = () => {
+    player = new YT.Player('ytPlayer', {
+      height: '0',
+      width: '0',
+      videoId: videoId,
+      playerVars: {
+        autoplay: 1,
+        mute: 1,
+        loop: 1,
+        playlist: videoId,
+        controls: 0,
+        showinfo: 0,
+        modestbranding: 1
+      },
+      events: {
+        onReady: (e) => {
+          e.target.playVideo();
+          musicPlaying = true;
+          btn.textContent = '🎵 apagar música';
+          btn.classList.add('playing');
+          status.textContent = '🎶 sonando: cumbia peruana';
+
+          // intenta destapar el audio a los 2s
+          setTimeout(() => {
+            try {
+              e.target.unMute();
+              e.target.setVolume(40);
+              unblocked = true;
+            } catch(_) {}
+          }, 2000);
+        }
+      }
+    });
+  };
+}
+
+// arranca automaticamente al cargar la pagina
+window.addEventListener('load', () => {
+  initMusic();
+});
+
+// si el usuario hace clic en cualquier lado, destapamos el audio
+document.addEventListener('click', () => {
+  if (player && !unblocked) {
+    try {
+      player.unMute();
+      player.setVolume(40);
+      unblocked = true;
+      document.getElementById('musicStatus').textContent = '🎶 sonando: cumbia peruana 🔊';
+    } catch(_) {}
+  }
+}, { once: true });
 
 function toggleMusic() {
   const btn = document.getElementById('musicBtn');
   const status = document.getElementById('musicStatus');
 
-  if (!musicPlaying) {
-    // Cargar el reproductor
-    if (!player) {
-      const tag = document.createElement('script');
-      tag.src = 'https://www.youtube.com/iframe_api';
-      document.head.appendChild(tag);
-
-      window.onYouTubeIframeAPIReady = () => {
-        player = new YT.Player('ytPlayer', {
-          height: '0',
-          width: '0',
-          videoId: videoId,
-          playerVars: {
-            autoplay: 1,
-            mute: 0,
-            loop: 1,
-            playlist: videoId,
-            controls: 0,
-            showinfo: 0,
-            modestbranding: 1
-          },
-          events: {
-            onReady: (e) => {
-              e.target.playVideo();
-              musicPlaying = true;
-              btn.textContent = '🎵 apagar música';
-              btn.classList.add('playing');
-              status.textContent = '🎶 sonando: cumbia peruana';
-            }
-          }
-        });
-      };
-    } else {
-      player.playVideo();
-      musicPlaying = true;
-      btn.textContent = '🎵 apagar música';
-      btn.classList.add('playing');
-      status.textContent = '🎶 sonando: cumbia peruana';
-    }
-  } else {
+  if (musicPlaying) {
     if (player) player.pauseVideo();
     musicPlaying = false;
     btn.textContent = '🎵 prender música';
     btn.classList.remove('playing');
     status.textContent = '⏸ pausado';
+  } else {
+    if (player) {
+      player.playVideo();
+      musicPlaying = true;
+      btn.textContent = '🎵 apagar música';
+      btn.classList.add('playing');
+      status.textContent = '🎶 sonando: cumbia peruana';
+    } else {
+      initMusic();
+    }
   }
 }
 </script>
